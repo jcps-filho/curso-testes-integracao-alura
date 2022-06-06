@@ -12,12 +12,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import br.com.alura.leilao.builder.LeilaoBuilder;
+import br.com.alura.leilao.builder.UsuarioBuilder;
 import br.com.alura.leilao.model.Leilao;
 import br.com.alura.leilao.model.Usuario;
 import br.com.alura.leilao.util.JPAUtil;
 
 class LeilaoDaoTest {
-
+	
 	private LeilaoDao dao;
 	private EntityManager em;
 	
@@ -35,7 +37,22 @@ class LeilaoDaoTest {
 	
 	@Test
 	void deveSalvarLeilao() {
-		Leilao leilao = criarLeilao();
+		Usuario usuario = new UsuarioBuilder()
+				.setNome("fulano")
+				.setEmail("fulano@email.com")
+				.setSenha("12345678")
+				.build();
+		
+		em.persist(usuario);
+		
+		Leilao leilao = new LeilaoBuilder()
+				.setNome("Computador Gamer")
+				.setValorInicial("10.000")
+				.setDataAbertura(LocalDate.now())
+				.setUsuario(usuario)
+				.build();
+		
+		em.persist(leilao);
 		
 		leilao = this.dao.salvar(leilao);
 		
@@ -45,7 +62,22 @@ class LeilaoDaoTest {
 	
 	@Test
 	void deveAtualizarLeilao() {
-		Leilao leilao = criarLeilao();
+		Usuario usuario = new UsuarioBuilder()
+				.setNome("fulano")
+				.setEmail("fulano@email.com")
+				.setSenha("12345678")
+				.build();
+		
+		em.persist(usuario);
+		
+		Leilao leilao = new LeilaoBuilder()
+				.setNome("Computador Gamer")
+				.setValorInicial("10.000")
+				.setDataAbertura(LocalDate.now())
+				.setUsuario(usuario)
+				.build();
+		
+		em.persist(leilao);
 		
 		leilao = this.dao.salvar(leilao);
 		
@@ -57,19 +89,6 @@ class LeilaoDaoTest {
 		Leilao salvo = this.dao.buscarPorId(leilao.getId());
 		assertEquals("Celular", salvo.getNome());
 		assertEquals(new BigDecimal("400"), salvo.getValorInicial());
-	}
-	
-	private Leilao criarLeilao() {
-		Usuario usuario = criarUsuario();
-		Leilao leilao = new Leilao("Computador Gamer", new BigDecimal("10.000"), LocalDate.now(), usuario);
-		em.persist(leilao);
-		return leilao;
-	}
-	
-	private Usuario criarUsuario() {
-		Usuario usuario = new Usuario("fulano", "fulano@email.com", "12345678");
-		em.persist(usuario);
-		return usuario;
 	}
 
 }
